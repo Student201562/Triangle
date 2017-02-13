@@ -8,15 +8,15 @@ namespace Triangle
 {
     class Triangle
     {
-        public Point x;
-        public Point y;
-        public Point z;
+        public Point[] x;
 
         public Triangle(Point[] masPoint)
         {
-            this.x = masPoint[0];
-            this.y = masPoint[1];
-            this.z = masPoint[2];
+            this.x = new Point[masPoint.Length];
+            for (int i = 0; i < masPoint.Length; i++)
+            {
+                this.x[i] = masPoint[i];
+            }
         }
     }
 }

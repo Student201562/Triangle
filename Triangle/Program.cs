@@ -16,14 +16,17 @@ namespace Triangle
             Point[] points = new Point[3];
             Edge[] edges = new Edge[3];
 
+            Console.WriteLine("Введите количесто треугольников = ");
+            Triangle[] triangle = new Triangle[Convert.ToInt32(Console.ReadLine())];
             // Заполнение точек
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < triangle.Length; i++)
             {
-                points[i] = new Point(gen.Next(0,10), gen.Next(0,10));   
+                for (int j = 0; j < points.Length; j++)
+                {
+                    points[j] = new Point(gen.Next(0, 10), gen.Next(0, 10));
+                }
+                triangle[i] = new Triangle(points);
             }
-
-            Triangle triangle = new Triangle(points);
-
             PrintPoints(points);
 
             // Заполнение ребер
@@ -35,16 +38,19 @@ namespace Triangle
                     edges[i] = new Edge(points[i], points[i + 1]);
             }
 
-            // Формирование ребер и нахождение длины ребер
-            double[] findEdge = ShapeEdges(edges,points);
-            // Нахождение периметра
-            double perimetrTriangle = Perimeter(triangle, findEdge);
-            // Нахождение площади
-            double areaTriangle = Area(triangle, findEdge, perimetrTriangle);
-
+                // Формирование ребер и нахождение длины ребер
+                double[] findEdge = ShapeEdges(edges, points);
+                // Нахождение периметра
+                double perimetrTriangle = Perimeter(triangle[i], findEdge);
+                // Нахождение площади
+                double areaTriangle = Area(triangle, findEdge, perimetrTriangle);
+                // Нахождение прямоугольного треугольника
+                RightTriangle(triangle, findEdge);
+                // Нахождение равнобедренного треугольника
+                IsoscelesTriangle(triangle, findEdge);
+            
             Console.ReadKey();
         }
-
         static void PrintPoints(Point[] points)
         {
             for(int i = 0; i < points.Length; i++)
@@ -80,17 +86,19 @@ namespace Triangle
             }
             return edgesLength;
         }
-        static double Perimeter(Triangle triangle, double[] findEdge)
+        static double Perimeter(Triangle[] triangle, double[] findEdge)
         {
             double perimeterTriangle = 0;
-            for (int i = 0; i < findEdge.Length; i++)
-            {
-                perimeterTriangle += findEdge[i];
-            }
-            Console.WriteLine("Периметр треугольника = {0}",perimeterTriangle);
+
+                for (int i = 0; i < findEdge.Length; i++)
+                {
+                    perimeterTriangle += findEdge[i];
+                }
+                Console.WriteLine("Периметр треугольника = {0}", perimeterTriangle);
+
             return perimeterTriangle;
         }
-        static double Area(Triangle triangle, double[] findEdge, double perimetrtriangle)
+        static double Area(Triangle[] triangle, double[] findEdge, double perimetrtriangle)
         {
             double areaTriangle = 0;
             double semiPerimeter = perimetrtriangle/2;
@@ -103,6 +111,30 @@ namespace Triangle
             }
             Console.WriteLine("Площадь треугольника = {0}", areaTriangle);
             return areaTriangle;
+        }
+        static void RightTriangle(Triangle[] triangle, double[] findEdge)
+        {
+            //Считаем по Пифагору
+            Array.Sort(findEdge);
+            if (findEdge[2] == Math.Sqrt(Math.Pow((findEdge[1]), 2) + Math.Pow((findEdge[0]), 2)))
+            {
+                Console.WriteLine("Triangle is right");
+            }
+            else
+            {
+                Console.WriteLine("Triangle is't right");
+            }
+        }
+        static void IsoscelesTriangle(Triangle[] triangle, double[] findEdge)
+        {
+            if ((findEdge[0] == findEdge[1]) || (findEdge[2] == findEdge[1]) || (findEdge[2] == findEdge[0]))
+            {
+                Console.WriteLine("Triangle is Isosceles");
+            }
+            else
+            {
+                Console.WriteLine("Triangle is't Isosceles");
+            }
         }
     }
 }
