@@ -9,9 +9,20 @@ namespace Triangle
 {
     class Program
     {
-        static double[] sumTwoPoint;
         static void Main(string[] args)
         {
+            Random gen = new Random();
+            Point[] points = new Point[3];
+            Edge[] edges = new Edge[3];
+
+            double sumAveragePerimeterRightTriangles = 0;
+            double sumAverageAreaRightTriangles = 0;
+
+            double sumAveragePerimeterIsoscelesTriangles = 0;
+            double sumAverageAreaIsoscelesTriangles = 0;
+
+            double countRightTriangle = 0;
+            double countIsoscelesTriangle = 0;
             // Баловался 
             for (int i = 0; i <= 100; i++)
             {
@@ -19,12 +30,8 @@ namespace Triangle
                 System.Threading.Thread.Sleep(10);
             }
             Console.WriteLine();
-
-            Random gen = new Random();
-            Point[] points = new Point[3];
-            Edge[] edges = new Edge[3];
-
             Console.Write("Введите количесто треугольников = ");
+
             Triangle[] triangle = new Triangle[Convert.ToInt32(Console.ReadLine())];
             // Заполнение точек
             for (int i = 0; i < triangle.Length; i++)
@@ -35,8 +42,6 @@ namespace Triangle
                 }
                 triangle[i] = new Triangle(points);
             }
-            // Вывожу один раз в качестве проверке
-            PrintPoints(points);
             // Заполнение ребер
             for (int i = 0; i < edges.Length; i++)
             {
@@ -47,26 +52,49 @@ namespace Triangle
             }
             // Формирование ребер и нахождение длины ребер, не обязательный метод, 
             // так как уже есть похожий FormedLength
-            ShapeEdges(edges);
+                //ShapeEdges(edges);
 
             for (int i = 0; i < triangle.Length; i++)
             {
-                double[] findEdge = FormedLength(triangle[i]);
+                // Вывожу точки
+                PrintPoints(triangle[i].x);
+                double[] LenghtEdges = FormedLength(triangle[i]);
                 // Нахождение периметра
-                double perimetrTriangle = Perimeter(findEdge);
+                double perimetrTriangle = Perimeter(LenghtEdges);
+                         Console.WriteLine("Периметр треугольника = {0}", perimetrTriangle);
                 // Нахождение площади
-                double areaTriangle = Area(findEdge, perimetrTriangle);
+                double areaTriangle = Area(LenghtEdges, perimetrTriangle);
+                        Console.WriteLine("Площадь треугольника = {0}", areaTriangle);
                 // Нахождение прямоугольного треугольника
-                RightTriangle(findEdge);
+                int rightTriangle = RightTriangle(LenghtEdges, ref countRightTriangle);
+                    if (rightTriangle == 1)
+                    {
+                        sumAveragePerimeterRightTriangles = sumAveragePerimeterRightTriangles + Perimeter(LenghtEdges);
+                        sumAverageAreaRightTriangles = sumAverageAreaRightTriangles + Area(LenghtEdges, perimetrTriangle);
+                    }
+                
                 // Нахождение равнобедренного треугольника
-                IsoscelesTriangle(findEdge);
+                int isoscelesTriangle = IsoscelesTriangle(LenghtEdges, ref countIsoscelesTriangle);
+                    if (isoscelesTriangle == 1)
+                    {
+                        sumAveragePerimeterIsoscelesTriangles = sumAveragePerimeterIsoscelesTriangles + Perimeter(LenghtEdges);
+                        sumAverageAreaIsoscelesTriangles = sumAverageAreaIsoscelesTriangles + Area(LenghtEdges, perimetrTriangle);
+                    }
                 Console.WriteLine(@"
        ………(\__/)
-      ………(=’.’=) -- Улыбнулся, это {0} треугольник
+      ………(=’.’=) -- Улыбнулся! Это {0} треугольник
  ..…є[:]||||||||[:]э
       ………(`)_(`)", i);
+
                 Console.WriteLine();
             }
+
+            Console.WriteLine("Cредняя площадь всех прямоугольных треугольников = {0}", sumAverageAreaRightTriangles / countRightTriangle);
+            Console.WriteLine("Cредний периметр всех прямоугольных треугольников = {0}", sumAveragePerimeterRightTriangles / countRightTriangle);
+
+            Console.WriteLine("Cредняя площадь всех равнобедренных треугольников = {0}", sumAverageAreaIsoscelesTriangles / countIsoscelesTriangle);
+            Console.WriteLine("Cредний периметр всех равнобедренных треугольников = {0}", sumAveragePerimeterIsoscelesTriangles / countIsoscelesTriangle);
+
             Console.ReadKey();
         }
         // Метод вывода точек на консоль
@@ -83,7 +111,7 @@ namespace Triangle
         // для одного триугольника, а метод FormedLength - считает для всех
         static void ShapeEdges(Edge[] edges)
         {
-            sumTwoPoint = new double[3];
+            double[] sumTwoPoint = new double[3];
             //double[] edgesLength = new double[3];
             Console.WriteLine("Значение ребр");
             for (int i = 0; i < edges.Length; i++)
@@ -109,21 +137,22 @@ namespace Triangle
         // для удобной работы в дальнейшем
         static double[] FormedLength(Triangle triangle)
         {
-            double[] edgeLength = new double[triangle.x.Length];
+            double[] edgeLength = new double[3];
             
             for (int i = 0; i < triangle.x.Length; i++)
             {
                 if (i == (triangle.x.Length - 1))
                 {
-                    edgeLength[i] = Math.Sqrt(Math.Pow(triangle.x[i - 2].x - triangle.x[i].x, 2) +
-                                              Math.Pow(triangle.x[i - 2].y - triangle.x[i].y, 2));
+                    edgeLength[i] = Math.Sqrt(Math.Pow((triangle.x[i - 2].x - triangle.x[i].x),2) +
+                                              Math.Pow((triangle.x[i - 2].y - triangle.x[i].y), 2));
                 }
                 else
                 {
-                    edgeLength[i] = Math.Sqrt(Math.Pow(triangle.x[i + 1].x - triangle.x[i].x, 2) +
-                                              Math.Pow(triangle.x[i + 1].y - triangle.x[i].y, 2));
+                    edgeLength[i] = Math.Sqrt(Math.Pow((triangle.x[i + 1].x - triangle.x[i].x), 2) +
+                                              Math.Pow((triangle.x[i + 1].y - triangle.x[i].y), 2));
                 }
             }
+            Console.WriteLine("Длина ребер\n" + edgeLength[0] + "\n" + edgeLength[1] + "\n" + edgeLength[2] + "\n");
             return edgeLength;
         }
         // Метод, который находит периметр каждого треугольника, здесь мы передаем длину ребер, 
@@ -135,7 +164,6 @@ namespace Triangle
                 {
                     perimeterTriangle += findEdge[j];
                 }
-                Console.WriteLine("Периметр треугольника = {0}", perimeterTriangle);
             return perimeterTriangle;
         }
         // Метод, который находит площадь для кадого треугольника, здесь мы передаем длину 
@@ -151,34 +179,44 @@ namespace Triangle
                 helpValueFinal *= helpValue;
                 areaTriangle = Math.Sqrt(semiPerimeter*helpValueFinal);
             }
-            Console.WriteLine("Площадь треугольника = {0}", areaTriangle);
             return areaTriangle;
         }
         // Метод, который находит прямоугольный треугольник, по Пифагору
-        static void RightTriangle(double[] findEdge)
+        static int RightTriangle(double[] findEdge, ref double countRightTriangle)
         {
             //Считаем по Пифагору
             Array.Sort(findEdge); // Грех не воспользоваться готовым методом
             if (findEdge[2] == Math.Sqrt(Math.Pow((findEdge[1]), 2) + Math.Pow((findEdge[0]), 2)))
             {
                 Console.WriteLine("Triangle is right");
+                        countRightTriangle += 1;
+                return 1;
             }
             else
             {
                 Console.WriteLine("Triangle is't right");
+                return 0;
             }
         }
         // Метод, который находит равнобедренность каждого треугольника
-        static void IsoscelesTriangle(double[] findEdge)
+        static int IsoscelesTriangle(double[] findEdge, ref double countIsoscelesTriangle)
         {
             if ((findEdge[0] == findEdge[1]) || (findEdge[2] == findEdge[1]) || (findEdge[2] == findEdge[0]))
             {
                 Console.WriteLine("Triangle is Isosceles");
+                        countIsoscelesTriangle += 1;
+                return 1;
             }
             else
             {
                 Console.WriteLine("Triangle is't Isosceles");
+                return 0;
             }
         }
     }
 }
+// 1/ В равностороннем все стороны равны 
+// 2/ Если две из трех сторон одинаковы, то это равнобедренный 
+//треугольник(ВНИМАНИЕ! сумма этих двух сторон ДОЛЖНА БЫТЬ БОЛЬШЕ третьей)
+// 3/ По теореме Пифагора - если сумма квадратов двух меньших сторон РАВНА квадрату большей стороны, 
+// то треугольник прямоугольный.Кстати, если МЕНЬШЕ - то угол тупой, а если БОЛЬШЕ - то острый. 
