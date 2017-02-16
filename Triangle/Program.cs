@@ -31,8 +31,10 @@ namespace Triangle
             }
             Console.WriteLine();
             Console.Write("Введите количесто треугольников = ");
-
+            
             Triangle[] triangle = new Triangle[Convert.ToInt32(Console.ReadLine())];
+            CheckPoint[] checkPoint = new CheckPoint[points.Length];
+
             // Заполнение точек
             for (int i = 0; i < triangle.Length; i++)
             {
@@ -40,6 +42,9 @@ namespace Triangle
                 {
                     points[j] = new Point(gen.Next(0, 10), gen.Next(0, 10));
                 }
+                checkPoint[i] = new CheckPoint(points);
+                checkPoint[i].CheckPointsInMassive(points);
+
                 triangle[i] = new Triangle(points);
             }
             // Заполнение ребер
@@ -50,9 +55,6 @@ namespace Triangle
                 else
                     edges[i] = new Edge(points[i], points[i + 1]);
             }
-            // Формирование ребер и нахождение длины ребер, не обязательный метод, 
-            // так как уже есть похожий FormedLength
-                //ShapeEdges(edges);
 
             for (int i = 0; i < triangle.Length; i++)
             {
