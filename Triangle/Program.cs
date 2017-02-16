@@ -29,24 +29,25 @@ namespace Triangle
                 Console.Write("\r {0} %", i);
                 System.Threading.Thread.Sleep(10);
             }
+
             Console.WriteLine();
             Console.Write("Введите количесто треугольников = ");
             
             Triangle[] triangle = new Triangle[Convert.ToInt32(Console.ReadLine())];
-            CheckPoint[] checkPoint = new CheckPoint[points.Length];
 
             // Заполнение точек
+            
             for (int i = 0; i < triangle.Length; i++)
             {
                 for (int j = 0; j < points.Length; j++)
                 {
                     points[j] = new Point(gen.Next(0, 10), gen.Next(0, 10));
                 }
-                checkPoint[i] = new CheckPoint(points);
-                checkPoint[i].CheckPointsInMassive(points);
+                CheckPointsInMassive(points);
 
                 triangle[i] = new Triangle(points);
             }
+
             // Заполнение ребер
             for (int i = 0; i < edges.Length; i++)
             {
@@ -134,6 +135,25 @@ namespace Triangle
                 }
             }
             //return edgesLength; Хотел сделать функцию
+        }
+        static void CheckPointsInMassive(Point[] points)
+        {
+            Random gen = new Random();
+            if (points[0] == points[1])
+            {
+                points[0].x += gen.Next(1, 5);
+                points[0].y += gen.Next(6, 9);
+            }
+            if (points[1] == points[2])
+            {
+                points[1].x += gen.Next(9, 14);
+                points[1].y += gen.Next(15, 19);
+            }
+            if (points[0] == points[2])
+            {
+                points[1].x += gen.Next(19, 23);
+                points[1].y += gen.Next(24, 27);
+            }
         }
         // Метод, который формирует длину ребер и записывает их в один массив,
         // для удобной работы в дальнейшем
