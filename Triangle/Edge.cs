@@ -8,13 +8,17 @@ namespace Triangle
 {
     class Edge
     {
-        public Point a;
-        public Point b;
+        public Point pointA;
+        public Point pointB;
 
         public Edge(Point a, Point b)
         {
-            this.a = a;
-            this.b = b;
+            this.pointA = a;
+            this.pointB = b;
+        }
+        public double GetLenghteEdge()
+        {
+            return Math.Sqrt(Math.Pow((pointB.x - pointA.x),2) + Math.Pow((pointB.y - pointA.y),2));
         }
     }
 }
